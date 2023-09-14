@@ -9,21 +9,35 @@ namespace ChatAPI.Domain.Commands.Handlers
     public class CreateSessionHandler : IRequestHandler<CreateSessionRequest, CreateSessionResponse>
     {
         private readonly IBusControl _bus;
+        private readonly ILogger _logger;
 
-        public CreateSessionHandler(IBusControl bus)
+        public CreateSessionHandler(ILogger<CreateSessionHandler> logger, IBusControl bus)
         {
+            _logger = logger;
             _bus = bus;
         }
 
         public async Task<CreateSessionResponse> Handle(CreateSessionRequest request, CancellationToken cancellationToken)
         {
-            await _bus.Publish(new SessionMessage
+            var message = new SessionMessage
             {
                 Name = request.Name,
                 Active = true,
                 CreatedAt = DateTime.Now
-            });
-            return new CreateSessionResponse { SessionCreated = true };
+            };
+
+            try
+            {
+                await _bus.Publish(message);
+                _logger.LogInformation($"Message '{message.Name}' added to queue!");
+                return new CreateSessionResponse { SessionCreated = true };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error sending message '{message.Name}' to queue!");
+                return new CreateSessionResponse { SessionCreated = false, ErrorMessage = ex.Message };
+            }
+
         }
     }
 }
