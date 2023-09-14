@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="masstransit.rabbitmq" Version="8.1.0" />
-    <PackageReference Include="mediatR" Version="12.1.1" />
-    <PackageReference Include="mediatr.extensions.microsoft.dependencyinjection" Version="11.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>

@@ -1,31 +1,27 @@
+using ChatCoordinatorService.Consumers;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+});
 
 builder.Services.AddControllers();
-builder.Services.AddMediatR(c =>
-{
-    c.RegisterServicesFromAssembly(typeof(Program).Assembly);
-});
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<SessionConsumer>();
-    x.UsingRabbitMq((context, cfg) =>
+    x.UsingRabbitMq((ctx, cfg) =>
     {
-        cfg.ReceiveEndpoint("order_queue", e =>
+        // cfg.PrefetchCount = 32; // applies to all receive endpoints
+        cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
+        cfg.ReceiveEndpoint("session-queue", e =>
         {
-            e.ConfigureConsumer<OrderConsumer>(context);
+            // e.ConcurrentMessageLimit = 28; // only applies to this endpoint
+            e.ConfigureConsumer<SessionConsumer>(ctx);
         });
-
-        cfg.Host("localhost", "/", h =>
-        {
-            h.Username("guest");
-            h.Password("guest");
-        });
-
-        cfg.ConfigureEndpoints(context);
     });
 });
 builder.Services.AddEndpointsApiExplorer();

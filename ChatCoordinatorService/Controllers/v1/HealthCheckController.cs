@@ -1,6 +1,3 @@
-using ChatAPI.Domain.Commands.Requests;
-using ChatAPI.Domain.Commands.Responses;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChatCoordinatorService.Controllers
