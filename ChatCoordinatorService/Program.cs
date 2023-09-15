@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using ChatCoordinatorService.Services;
 using ChatCoordinatorService.DB;
+using System.Reflection;
+using MassTransit;
+using ChatCoordinatorService.Consumers;
+using ChatCoordinatorService.Domain;
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
@@ -13,7 +17,24 @@ builder.Services.AddHostedService<CoordinatorService>();
 // Configure DB Context
 builder.Services.AddDbContext<DatabaseContext>(op =>
     op.UseInMemoryDatabase(builder.Configuration.GetConnectionString("Database")));
-// builder.Services.AddScoped<IAgentRepository, AgentRepository>();
+
+// MassTransit
+builder.Services.AddMassTransit(x =>
+{
+    x.SetKebabCaseEndpointNameFormatter();
+    x.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
+        cfg.ConfigureEndpoints(ctx);
+        cfg.ReceiveEndpoint("session-queue", x =>
+        {
+            x.Consumer<SessionConsumer>(ctx);
+            x.Bind("ChatAPI");
+        });
+    });
+});
+builder.Services.AddScoped<SessionConsumer>();
+
 
 IHost host = builder.Build();
 host.Run();
