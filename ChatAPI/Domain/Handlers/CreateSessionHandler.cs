@@ -1,6 +1,6 @@
 using ChatAPI.Domain.Commands.Requests;
 using ChatAPI.Domain.Commands.Responses;
-using ChatAPI.Domain.Publishers;
+using ChatDomain;
 using MassTransit;
 using MediatR;
 

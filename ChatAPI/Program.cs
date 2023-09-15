@@ -1,4 +1,4 @@
-using ChatAPI.Domain.Publishers;
+using ChatDomain;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,13 +20,8 @@ builder.Services.AddMassTransit(x =>
     x.UsingRabbitMq((ctx, cfg) =>
     {
         cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
-        cfg.ConfigureEndpoints(ctx, new KebabCaseEndpointNameFormatter("dev", false));
-        cfg.Publish<SessionMessage>(x =>
-        {
-            x.Durable = true;
-            x.AutoDelete = false;
-            x.ExchangeType = "fanout";
-        });
+        cfg.ConfigureEndpoints(ctx);
+        cfg.Message<SessionMessage>(x => x.SetEntityName("ChatAPI"));
     });
 });
 builder.Services.AddEndpointsApiExplorer();
