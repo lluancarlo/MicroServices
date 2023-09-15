@@ -21,6 +21,7 @@ namespace ChatAPI.Domain.Commands.Handlers
         {
             var message = new SessionMessage
             {
+                Id = Guid.NewGuid(),
                 Name = request.Name,
                 Active = true,
                 CreatedAt = DateTime.Now

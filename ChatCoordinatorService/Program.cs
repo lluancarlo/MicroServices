@@ -1,45 +1,28 @@
-using ChatCoordinatorService.Consumers;
-using MassTransit;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using ChatCoordinatorService.Services;
+using ChatCoordinatorService.DB;
 
-var builder = WebApplication.CreateBuilder(args);
+HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
-builder.Host.ConfigureLogging(logging =>
-{
-    logging.ClearProviders();
-    logging.AddConsole();
-});
+// Add Services
+builder.Services.AddHostedService<CoordinatorService>();
 
-builder.Services.AddControllers();
-builder.Services.AddMassTransit(x =>
-{
-    x.AddConsumer<SessionConsumer>();
-    x.UsingRabbitMq((ctx, cfg) =>
-    {
-        // cfg.PrefetchCount = 32; // applies to all receive endpoints
-        cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
-        cfg.ReceiveEndpoint("session-queue", e =>
-        {
-            // e.ConcurrentMessageLimit = 28; // only applies to this endpoint
-            e.ConfigureConsumer<SessionConsumer>(ctx);
-        });
-    });
-});
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configure DB Context
+builder.Services.AddDbContext<DatabaseContext>(op =>
+    op.UseInMemoryDatabase(builder.Configuration.GetConnectionString("Database")));
+// builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 
-var app = builder.Build();
+IHost host = builder.Build();
+host.Run();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// MyDatabaseContext db = new MyDatabaseContext(new DbContextOptionsBuilder<MyDatabaseContext>().UseInMemoryDatabase("TEST").Options);
+// db.Persons.Add(new Person() { FirstName = "Berend", LastName = "de Jong" });
+// db.SaveChanges();
+// db.Persons.ForEachAsync((person) => Console.WriteLine($"{person.Id}\t{person.FirstName}\t{person.LastName}"));
 
-app.UseHttpsRedirection();
+// Console.ReadLine();
 
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+// Mock agents
