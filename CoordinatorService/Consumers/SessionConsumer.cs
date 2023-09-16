@@ -1,9 +1,9 @@
 using System.Text.Json;
-using ChatDomain;
+using DomainLib;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 
-namespace ChatCoordinatorService.Consumers
+namespace CoordinatorService.Consumers
 {
     public class SessionConsumer : IConsumer<SessionMessage>
     {

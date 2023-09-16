@@ -1,4 +1,4 @@
-namespace ChatCoordinatorService.Domain.Enums
+namespace CoordinatorService.Domain.Enums
 {
     public enum ShiftEnum
     {

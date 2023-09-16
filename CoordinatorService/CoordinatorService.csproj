@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChatDomainLib\ChatDomainLib.csproj" />
+    <ProjectReference Include="..\DomainLib\DomainLib.csproj" />
   </ItemGroup>
 
 </Project>

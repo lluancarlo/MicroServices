@@ -1,6 +1,6 @@
-using ChatCoordinatorService.Domain.Enums;
+using CoordinatorService.Domain.Enums;
 
-namespace ChatCoordinatorService.Domain
+namespace CoordinatorService.Domain
 {
     public class Agent
     {

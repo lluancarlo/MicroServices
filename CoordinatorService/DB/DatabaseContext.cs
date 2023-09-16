@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using ChatCoordinatorService.Domain;
+using CoordinatorService.Domain;
 
-namespace ChatCoordinatorService.DB
+namespace CoordinatorService.DB
 {
     public class DatabaseContext : DbContext
     {

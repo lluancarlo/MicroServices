@@ -1,6 +1,6 @@
-namespace ChatDomain
+namespace CoordinatorService.Domain
 {
-    public class SessionMessage
+    public class Session
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

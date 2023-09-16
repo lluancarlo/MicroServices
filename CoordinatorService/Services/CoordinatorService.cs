@@ -1,17 +1,17 @@
-using ChatCoordinatorService.DB;
-using ChatCoordinatorService.Domain;
+using CoordinatorService.DB;
+using CoordinatorService.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace ChatCoordinatorService.Services;
+namespace CoordinatorService.Services;
 
-public sealed class CoordinatorService : IHostedService
+public class CoordinatorMainService : IHostedService
 {
     private readonly ILogger _logger;
     private readonly DatabaseContext _db;
 
-    public CoordinatorService(ILogger<CoordinatorService> logger,
+    public CoordinatorMainService(ILogger<CoordinatorMainService> logger,
                               DatabaseContext db)
     {
         _logger = logger;

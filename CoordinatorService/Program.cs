@@ -2,17 +2,15 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using ChatCoordinatorService.Services;
-using ChatCoordinatorService.DB;
-using System.Reflection;
 using MassTransit;
-using ChatCoordinatorService.Consumers;
-using ChatCoordinatorService.Domain;
+using CoordinatorService.DB;
+using CoordinatorService.Consumers;
+using CoordinatorService.Services;
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 // Add Services
-builder.Services.AddHostedService<CoordinatorService>();
+builder.Services.AddHostedService<CoordinatorMainService>();
 
 // Configure DB Context
 builder.Services.AddDbContext<DatabaseContext>(op =>
@@ -38,12 +36,3 @@ builder.Services.AddScoped<SessionConsumer>();
 
 IHost host = builder.Build();
 host.Run();
-
-// MyDatabaseContext db = new MyDatabaseContext(new DbContextOptionsBuilder<MyDatabaseContext>().UseInMemoryDatabase("TEST").Options);
-// db.Persons.Add(new Person() { FirstName = "Berend", LastName = "de Jong" });
-// db.SaveChanges();
-// db.Persons.ForEachAsync((person) => Console.WriteLine($"{person.Id}\t{person.FirstName}\t{person.LastName}"));
-
-// Console.ReadLine();
-
-// Mock agents

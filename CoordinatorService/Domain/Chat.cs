@@ -1,4 +1,4 @@
-namespace ChatCoordinatorService.Domain
+namespace CoordinatorService.Domain
 {
     public class Chat
     {
