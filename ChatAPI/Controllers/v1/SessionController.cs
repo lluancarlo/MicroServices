@@ -22,5 +22,12 @@ namespace ChatAPI.Controllers
         {
             return _mediator.Send(command);
         }
+
+        [HttpGet]
+        [Route("Poll")]
+        public Task<PollSessionResponse> Poll([FromQuery] PollSessionRequest command)
+        {
+            return _mediator.Send(command);
+        }
     }
 }

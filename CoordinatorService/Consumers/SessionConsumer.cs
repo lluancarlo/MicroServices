@@ -1,5 +1,5 @@
 using System.Text.Json;
-using DomainLib;
+using DomainLib.Contracts;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 

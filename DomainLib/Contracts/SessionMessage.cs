@@ -1,4 +1,4 @@
-namespace DomainLib
+namespace DomainLib.Contracts
 {
     public class SessionMessage
     {

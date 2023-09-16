@@ -1,6 +1,6 @@
 using ChatAPI.Domain.Commands.Requests;
 using ChatAPI.Domain.Commands.Responses;
-using DomainLib;
+using DomainLib.Contracts;
 using MassTransit;
 using MediatR;
 
@@ -22,7 +22,7 @@ namespace ChatAPI.Domain.Commands.Handlers
             var message = new SessionMessage
             {
                 Id = Guid.NewGuid(),
-                Name = request.Name,
+                Name = request.CustomerName,
                 Active = true,
                 CreatedAt = DateTime.Now
             };
@@ -31,7 +31,7 @@ namespace ChatAPI.Domain.Commands.Handlers
             {
                 await _bus.Publish(message);
                 _logger.LogInformation($"Message '{message.Name}' added to queue!");
-                return new CreateSessionResponse { SessionCreated = true };
+                return new CreateSessionResponse { SessionId = message.Id, SessionCreated = true };
             }
             catch (Exception ex)
             {

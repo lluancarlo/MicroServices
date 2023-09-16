@@ -1,4 +1,4 @@
-using DomainLib;
+using DomainLib.Contracts;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
