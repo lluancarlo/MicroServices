@@ -10,6 +10,7 @@ using CoordinatorService.Services;
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 // Add Services
+builder.Services.AddHostedService<ShiftService>();
 builder.Services.AddHostedService<CoordinatorMainService>();
 
 // Configure DB Context
