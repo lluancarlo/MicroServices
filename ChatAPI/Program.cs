@@ -1,4 +1,4 @@
-using ChatDomain;
+using DomainLib;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
