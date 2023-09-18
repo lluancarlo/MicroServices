@@ -28,6 +28,7 @@ namespace ChatAPI.Domain.Commands.Handlers
 
             try
             {
+                // Refactor to add MassTransit Requests instead
                 await _bus.Publish(message);
                 _logger.LogInformation($"Message '{message.CustomerName}' added to queue!");
                 return new CreateSessionResponse { SessionId = message.Id, SessionCreated = true };

@@ -25,7 +25,9 @@ builder.Services.AddMassTransit(x =>
     {
         cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
         cfg.ConfigureEndpoints(ctx);
-        // cfg.Message<ChatMessage>(x => x.SetEntityName("chat-agent-exchange"));
+
+        cfg.Message<ChatMessage>(x => x.SetEntityName("chat-agent-exchange"));
+
         cfg.ReceiveEndpoint("create-session", x =>
         {
             x.Consumer<CreateSessionConsumer>(ctx);

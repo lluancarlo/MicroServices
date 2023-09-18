@@ -26,6 +26,7 @@ namespace ChatAPI.Domain.Commands.Handlers
 
             try
             {
+                // Refactor to add MassTransit Requests instead
                 await _bus.Publish(message);
                 _logger.LogInformation($"Polling chat '{message.Id}'!");
                 return new PollSessionResponse { PollSuccess = true, ErrorMessage = String.Empty };
