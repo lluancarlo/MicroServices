@@ -1,6 +1,5 @@
 using ChatAPI.Domain.Commands.Requests;
 using ChatAPI.Domain.Commands.Responses;
-using DomainLib.Contracts;
 using MassTransit;
 using MediatR;
 

@@ -3,11 +3,7 @@ using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.ConfigureLogging(logging =>
-{
-    logging.ClearProviders();
-    logging.AddConsole();
-});
+builder.Logging.AddConsole();
 
 builder.Services.AddControllers();
 builder.Services.AddMediatR(c =>
@@ -21,7 +17,7 @@ builder.Services.AddMassTransit(x =>
     {
         cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
         cfg.ConfigureEndpoints(ctx);
-        cfg.Message<SessionMessage>(x => x.SetEntityName("ChatAPI"));
+        cfg.Message<SessionMessage>(x => x.SetEntityName("session-exchange"));
     });
 });
 builder.Services.AddEndpointsApiExplorer();

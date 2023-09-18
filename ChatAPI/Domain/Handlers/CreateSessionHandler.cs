@@ -22,7 +22,7 @@ namespace ChatAPI.Domain.Commands.Handlers
             var message = new SessionMessage
             {
                 Id = Guid.NewGuid(),
-                Name = request.CustomerName,
+                CustomerName = request.CustomerName,
                 Active = true,
                 CreatedAt = DateTime.Now
             };
@@ -30,12 +30,12 @@ namespace ChatAPI.Domain.Commands.Handlers
             try
             {
                 await _bus.Publish(message);
-                _logger.LogInformation($"Message '{message.Name}' added to queue!");
+                _logger.LogInformation($"Message '{message.CustomerName}' added to queue!");
                 return new CreateSessionResponse { SessionId = message.Id, SessionCreated = true };
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error sending message '{message.Name}' to queue!");
+                _logger.LogError($"Error sending message '{message.CustomerName}' to queue!");
                 return new CreateSessionResponse { SessionCreated = false, ErrorMessage = ex.Message };
             }
 
