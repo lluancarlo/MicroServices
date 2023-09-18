@@ -6,11 +6,11 @@ using MassTransit;
 using CoordinatorService.DB;
 using CoordinatorService.Consumers;
 using CoordinatorService.Services;
+using DomainLib.Contracts;
 
 HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
 // Add Services
-builder.Services.AddHostedService<ShiftService>();
 builder.Services.AddHostedService<CoordinatorMainService>();
 
 // Configure DB Context
@@ -25,7 +25,8 @@ builder.Services.AddMassTransit(x =>
     {
         cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
         cfg.ConfigureEndpoints(ctx);
-        cfg.ReceiveEndpoint("session-queue", x =>
+        cfg.Message<ChatMessage>(x => x.SetEntityName("chat-agent-exchange"));
+        cfg.ReceiveEndpoint("session-exchange", x =>
         {
             x.Consumer<SessionConsumer>(ctx);
             x.Bind("ChatAPI");

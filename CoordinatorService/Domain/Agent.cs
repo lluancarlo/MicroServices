@@ -9,5 +9,7 @@ namespace CoordinatorService.Domain
         public StatusEnum Status { get; set; }
         public SeniorityEnum Seniority { get; set; }
         public ShiftEnum Shift { get; set; }
+        public int Capacity { get; set; }
+        public int ActiveChats { get; set; }
     }
 }
