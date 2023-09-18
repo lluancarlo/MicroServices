@@ -17,7 +17,8 @@ builder.Services.AddMassTransit(x =>
     {
         cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
         cfg.ConfigureEndpoints(ctx);
-        cfg.Message<SessionMessage>(x => x.SetEntityName("session-exchange"));
+        cfg.Message<CreateSessionMessage>(x => x.SetEntityName("create-session"));
+        cfg.Message<PollSessionMessage>(x => x.SetEntityName("poll-session"));
     });
 });
 builder.Services.AddEndpointsApiExplorer();

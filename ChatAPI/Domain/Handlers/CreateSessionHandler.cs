@@ -19,7 +19,7 @@ namespace ChatAPI.Domain.Commands.Handlers
 
         public async Task<CreateSessionResponse> Handle(CreateSessionRequest request, CancellationToken cancellationToken)
         {
-            var message = new SessionMessage
+            var message = new CreateSessionMessage
             {
                 Id = Guid.NewGuid(),
                 CustomerName = request.CustomerName,

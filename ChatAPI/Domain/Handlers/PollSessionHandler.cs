@@ -1,5 +1,6 @@
 using ChatAPI.Domain.Commands.Requests;
 using ChatAPI.Domain.Commands.Responses;
+using DomainLib.Contracts;
 using MassTransit;
 using MediatR;
 
@@ -18,11 +19,22 @@ namespace ChatAPI.Domain.Commands.Handlers
 
         public async Task<PollSessionResponse> Handle(PollSessionRequest request, CancellationToken cancellationToken)
         {
-            // TODO: Poll chat based on request.id
-            _logger.LogInformation($"Chat poll not implemented yet!");
-            var result = new PollSessionResponse { Messages = "New messages from Agent X" };
+            var message = new PollSessionMessage
+            {
+                Id = request.Id
+            };
 
-            return await Task.FromResult(result);
+            try
+            {
+                await _bus.Publish(message);
+                _logger.LogInformation($"Polling chat '{message.Id}'!");
+                return new PollSessionResponse { Messages = "New messages from Agent X" };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error polling chat '{message.Id}'!");
+                return new PollSessionResponse { Messages = "New messages from Agent X" };
+            }
         }
     }
 }
