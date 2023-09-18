@@ -1,6 +1,6 @@
 namespace DomainLib.Contracts
 {
-    public class SessionMessage
+    public class CreateSessionMessage
     {
         public Guid Id { get; set; }
         public string CustomerName { get; set; }
