@@ -23,7 +23,6 @@ namespace ChatAPI.Domain.Commands.Handlers
             {
                 Id = Guid.NewGuid(),
                 CustomerName = request.CustomerName,
-                Active = true,
                 CreatedAt = DateTime.Now
             };
 
