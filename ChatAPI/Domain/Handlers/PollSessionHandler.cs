@@ -28,12 +28,12 @@ namespace ChatAPI.Domain.Commands.Handlers
             {
                 await _bus.Publish(message);
                 _logger.LogInformation($"Polling chat '{message.Id}'!");
-                return new PollSessionResponse { Messages = "New messages from Agent X" };
+                return new PollSessionResponse { PollSuccess = true, ErrorMessage = String.Empty };
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error polling chat '{message.Id}'!");
-                return new PollSessionResponse { Messages = "New messages from Agent X" };
+                _logger.LogError($"Error polling chat '{message.Id}'! {ex.Message}");
+                return new PollSessionResponse { PollSuccess = false, ErrorMessage = $"Error polling chat '{message.Id}'!" };
             }
         }
     }
