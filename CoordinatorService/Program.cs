@@ -25,15 +25,19 @@ builder.Services.AddMassTransit(x =>
     {
         cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
         cfg.ConfigureEndpoints(ctx);
-        cfg.Message<ChatMessage>(x => x.SetEntityName("chat-agent-exchange"));
-        cfg.ReceiveEndpoint("session-exchange", x =>
+        // cfg.Message<ChatMessage>(x => x.SetEntityName("chat-agent-exchange"));
+        cfg.ReceiveEndpoint("create-session", x =>
         {
-            x.Consumer<SessionConsumer>(ctx);
-            x.Bind("ChatAPI");
+            x.Consumer<CreateSessionConsumer>(ctx);
+        });
+        cfg.ReceiveEndpoint("poll-session", x =>
+        {
+            x.Consumer<PollSessionConsumer>(ctx);
         });
     });
 });
-builder.Services.AddScoped<SessionConsumer>();
+builder.Services.AddScoped<CreateSessionConsumer>();
+builder.Services.AddScoped<PollSessionConsumer>();
 
 
 IHost host = builder.Build();

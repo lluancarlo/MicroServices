@@ -1,4 +1,5 @@
 using CoordinatorService.DB;
+using CoordinatorService.Domain;
 using CoordinatorService.Domain.Enums;
 using DomainLib.Contracts;
 using MassTransit;
@@ -7,27 +8,27 @@ using Microsoft.Extensions.Logging;
 
 namespace CoordinatorService.Consumers
 {
-    public class SessionConsumer : IConsumer<SessionMessage>
+    public class CreateSessionConsumer : IConsumer<CreateSessionMessage>
     {
         private const float _capacityMultiplier = 1.5f;
-        private readonly ILogger<SessionConsumer> _logger;
+        private readonly ILogger<CreateSessionConsumer> _logger;
         private readonly DatabaseContext _db;
         private readonly IBusControl _bus;
 
-        public SessionConsumer(ILogger<SessionConsumer> logger, DatabaseContext db, IBusControl bus)
+        public CreateSessionConsumer(ILogger<CreateSessionConsumer> logger, DatabaseContext db, IBusControl bus)
         {
             _logger = logger;
             _db = db;
             _bus = bus;
         }
 
-        public Task Consume(ConsumeContext<SessionMessage> context)
+        public Task Consume(ConsumeContext<CreateSessionMessage> context)
         {
             // Check if team has capacity enough
             var team = _db.Agents.Where(w => w.Status == StatusEnum.Online).AsNoTracking().ToList();
-            var activeChats = team.Sum(s => s.ActiveChats); // 16
+            var activeChats = team.Sum(s => s.ActiveChats); //
             var teamCapacity = team.Sum(s => s.Capacity); // 16
-            var queueLimit = teamCapacity * _capacityMultiplier; // 24
+            var queueLimit = Math.Floor(teamCapacity * _capacityMultiplier);
 
             // Active a agent from overflow team if so
             if (activeChats == teamCapacity && !team.Exists(e => e.Shift == ShiftEnum.Overflow))
@@ -38,6 +39,15 @@ namespace CoordinatorService.Consumers
                 queueLimit = _db.Agents.AsNoTracking()
                     .Where(w => w.Status == StatusEnum.Online).Sum(s => s.Capacity) * _capacityMultiplier;
             }
+
+            var new_session = new Session
+            {
+                Id = context.Message.Id,
+                CustomerName = context.Message.CustomerName,
+                Active = true,
+                CreatedAt = context.Message.CreatedAt,
+                PollCount = 0
+            };
 
             if (activeChats < queueLimit)
             {
@@ -54,14 +64,18 @@ namespace CoordinatorService.Consumers
                     Active = true
                 };
 
+                // _bus.Publish(newChat);
                 _logger.LogInformation($"Chat {context.Message.Id} assignet to agent {agent.Name} which has seniority of {agent.Seniority}");
-                _bus.Publish(newChat);
             }
             else
             {
+                new_session.Active = false;
                 // Refuse Chat
                 _logger.LogInformation($"Chat {context.Message.Id} refused. Queue limit reached.");
             }
+
+            _db.Sessions.Add(new_session);
+            _db.SaveChanges();
 
             return Task.CompletedTask;
         }

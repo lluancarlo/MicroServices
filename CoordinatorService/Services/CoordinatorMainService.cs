@@ -9,6 +9,13 @@ namespace CoordinatorService.Services;
 
 public class CoordinatorMainService : IHostedService
 {
+    private readonly Dictionary<SeniorityEnum, float> _efficiency = new()
+    {
+        {SeniorityEnum.Junior, 0.4f},
+        {SeniorityEnum.Mid, 0.6f},
+        {SeniorityEnum.Senior, 0.8f},
+        {SeniorityEnum.Lead, 0.5f},
+    };
     private readonly ILogger _logger;
     private readonly DatabaseContext _db;
 
@@ -50,9 +57,10 @@ public class CoordinatorMainService : IHostedService
             bakedAgents.Add(new Faker<Agent>()
                 .RuleFor(r => r.Id, f => Guid.NewGuid())
                 .RuleFor(r => r.Name, f => f.Name.FullName())
+                .RuleFor(r => r.Status, f => StatusEnum.Online)
                 .RuleFor(r => r.Seniority, f => seniority)
                 .RuleFor(r => r.Shift, f => ShiftEnum.Morning)
-                .RuleFor(r => r.Status, f => StatusEnum.Online)
+                .RuleFor(r => r.Capacity, f => CalculateCapacity(seniority))
             );
         });
 
@@ -68,9 +76,10 @@ public class CoordinatorMainService : IHostedService
             bakedAgents.Add(new Faker<Agent>()
                 .RuleFor(r => r.Id, f => Guid.NewGuid())
                 .RuleFor(r => r.Name, f => f.Name.FullName())
+                .RuleFor(r => r.Status, f => StatusEnum.Offline)
                 .RuleFor(r => r.Seniority, f => seniority)
                 .RuleFor(r => r.Shift, f => ShiftEnum.Afternoon)
-                .RuleFor(r => r.Status, f => StatusEnum.Offline)
+                .RuleFor(r => r.Capacity, f => CalculateCapacity(seniority))
             );
         });
 
@@ -80,9 +89,10 @@ public class CoordinatorMainService : IHostedService
             bakedAgents.Add(new Faker<Agent>()
                 .RuleFor(r => r.Id, f => Guid.NewGuid())
                 .RuleFor(r => r.Name, f => f.Name.FullName())
+                .RuleFor(r => r.Status, f => StatusEnum.Offline)
                 .RuleFor(r => r.Seniority, f => SeniorityEnum.Mid)
                 .RuleFor(r => r.Shift, f => ShiftEnum.Overnight)
-                .RuleFor(r => r.Status, f => StatusEnum.Offline)
+                .RuleFor(r => r.Capacity, f => CalculateCapacity(SeniorityEnum.Mid))
             );
         }
 
@@ -92,14 +102,20 @@ public class CoordinatorMainService : IHostedService
             bakedAgents.Add(new Faker<Agent>()
                 .RuleFor(r => r.Id, f => Guid.NewGuid())
                 .RuleFor(r => r.Name, f => f.Name.FullName())
+                .RuleFor(r => r.Status, f => StatusEnum.Offline)
                 .RuleFor(r => r.Seniority, f => SeniorityEnum.Junior)
                 .RuleFor(r => r.Shift, f => ShiftEnum.Overflow)
-                .RuleFor(r => r.Status, f => StatusEnum.Offline)
+                .RuleFor(r => r.Capacity, f => CalculateCapacity(SeniorityEnum.Junior))
             );
         }
 
         _logger.LogInformation($"[CoordinatorMainService] Generated {bakedAgents.Count()} agents.");
         _db.Agents.AddRange(bakedAgents);
         _db.SaveChanges();
+    }
+
+    private int CalculateCapacity(SeniorityEnum s)
+    {
+        return (int)Math.Floor(10 * _efficiency[s]);
     }
 }
